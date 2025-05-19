@@ -19,6 +19,9 @@ app.get("/bands", async (request, response) => {
 
 app.get("/musicians/:id", async (request, response) => {
     const musician = await Musician.findByPk(request.params.id);
+    if (!musician) {
+        return response.status(404).json({ error: "Musician not found" });
+    }
     response.json(musician);
 })
 

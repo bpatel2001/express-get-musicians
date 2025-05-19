@@ -54,3 +54,15 @@ describe('./bands endpoint', () => {
         expect(responseData).toEqual(bandsJSON);
     });
 })
+
+describe('./musicians/:id endpoint', () => {
+    test('GET /musicians/:id request is successful', async () => {
+        const response = await request(app).get('/musicians/1');
+        expect(response.statusCode).toBe(200);
+    });
+
+    test('GET /musicians/4 returns an error', async () => {
+        const response = await request(app).get('/musicians/4');
+        expect(response.statusCode).toBe(404);
+    });
+});
