@@ -1,27 +1,27 @@
 const express = require("express");
 const app = express();
-const route = require("express").Router();
+const musicianRouter = require("express").Router();
 const { Musician, Band } = require("../models/index")
 const { db } = require("../db/connection")
 
 const port = 3000;
 
-app.use(express.json());
-app.use(express.urlencoded());
+musicianRouter.use(express.json());
+musicianRouter.use(express.urlencoded());
 
 //TODO: Create a GET /musicians route to return all musicians 
 
-app.get("/musicians", async (request, response) => {
+musicianRouter.get("/", async (request, response) => {
     const musicians = await Musician.findAll();
     response.json(musicians);
 })
 
-app.get("/bands", async (request, response) => {
+musicianRouter.get("/bands", async (request, response) => {
     const bands = await Band.findAll();
     response.json(bands);
 })
 
-app.get("/musicians/:id", async (request, response) => {
+musicianRouter.get("/:id", async (request, response) => {
     const musician = await Musician.findByPk(request.params.id);
     if (!musician) {
         return response.status(404).json({ error: "Musician not found" });
@@ -29,7 +29,7 @@ app.get("/musicians/:id", async (request, response) => {
     response.json(musician);
 })
 
-app.post("/musicians", async (request, response) => {
+musicianRouter.post("/", async (request, response) => {
     if(!request.body || Object.keys(request.body).length === 0) {
         return response.status(400).json({ error: "Invalid request body" });
     }
@@ -40,7 +40,7 @@ app.post("/musicians", async (request, response) => {
     response.json(musician);
 })
 
-app.put("/musicians/:id", async (request, response) => {
+musicianRouter.put("/:id", async (request, response) => {
     const musicianId = request.params.id;
     const musician = await Musician.update(request.body, {
         where: { id: musicianId }
@@ -51,7 +51,7 @@ app.put("/musicians/:id", async (request, response) => {
     response.json(musician);
 })
 
-app.delete("/musicians/:id", async (request, response) => {
+musicianRouter.delete("/:id", async (request, response) => {
     const musicianId = request.params.id;
     const musician = await Musician.destroy({
         where: { id: musicianId }
@@ -62,4 +62,4 @@ app.delete("/musicians/:id", async (request, response) => {
     response.json(musician);
 })
 
-module.exports = app;
+module.exports = musicianRouter;
