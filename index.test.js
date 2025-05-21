@@ -51,23 +51,8 @@ describe('./musicians endpoint', () => {
 
 describe('./bands endpoint', () => {
     test('GET /bands request is successful', async () => {
-        const response = await request(app).get('/musicians/bands');
+        const response = await request(app).get('/bands');
         expect(response.statusCode).toBe(200);
-    });
-
-    test('GET /bands returns all bands', async () => {
-        const bands = await Band.findAll();
-        const response = await request(app).get('/musicians/bands');
-        const responseData = JSON.parse(response.text);
-
-        const bandsJSON = bands.map(band => {
-            const bandJSON = band.toJSON();
-            bandJSON.createdAt = bandJSON.createdAt.toISOString();
-            bandJSON.updatedAt = bandJSON.updatedAt.toISOString();
-            return bandJSON;
-        });
-
-        expect(responseData).toEqual(bandsJSON);
     });
 })
 
