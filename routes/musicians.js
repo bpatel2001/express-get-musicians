@@ -1,7 +1,6 @@
 const express = require("express");
-const app = express();
 const musicianRouter = require("express").Router();
-const { Musician, Band } = require("../models/index")
+const { Musician } = require("../models/index")
 const { db } = require("../db/connection")
 
 const port = 3000;
@@ -14,11 +13,6 @@ musicianRouter.use(express.urlencoded());
 musicianRouter.get("/", async (request, response) => {
     const musicians = await Musician.findAll();
     response.json(musicians);
-})
-
-musicianRouter.get("/bands", async (request, response) => {
-    const bands = await Band.findAll();
-    response.json(bands);
 })
 
 musicianRouter.get("/:id", async (request, response) => {
