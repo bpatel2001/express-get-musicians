@@ -1,9 +1,9 @@
 const express = require("express");
 const musicianRouter = require("express").Router();
 const { Musician } = require("../models/index")
-const { db } = require("../db/connection")
+const { check, validationResult } = require("express-validator");
 
-const port = 3000;
+const { db } = require("../db/connection")
 
 musicianRouter.use(express.json());
 musicianRouter.use(express.urlencoded());
@@ -23,15 +23,20 @@ musicianRouter.get("/:id", async (request, response) => {
     response.json(musician);
 })
 
-musicianRouter.post("/", async (request, response) => {
-    if(!request.body || Object.keys(request.body).length === 0) {
-        return response.status(400).json({ error: "Invalid request body" });
-    }
+musicianRouter.post("/",
+    [
+        check("name").not().isEmpty().trim(),
+        check("instrument").not().isEmpty().trim(),
+    ], 
+    async (request, response) => {
+        errors = validationResult(request);
+        if (!errors.isEmpty()) {
+            return response.json({ errors: errors.array() });
+        }
 
-    const musician = await Musician.create(request.body);
+        const musician = await Musician.create(request.body);
 
-    console.log(request.body);
-    response.json(musician);
+        response.json(musician);
 })
 
 musicianRouter.put("/:id", async (request, response) => {

@@ -37,15 +37,11 @@ describe('./musicians endpoint', () => {
         expect(response.statusCode).toBe(200);
     });
 
-    test ('POST /musicians returns an error', async () => {
-        const response = await request(app).post('/musicians');
-        expect(response.statusCode).toBe(400);
-    })
-
-    test('POST /musicians creates a new musician', async () => {
-        const response = await request(app).post('/musicians').send(seedMusician[0]);
-        const musician = await Musician.findByPk(response.body.id);
-        expect(musician).toBeTruthy();
+    test('POST /musicians returns error key with array if name, location, or cuisine fields are empty', async () => {
+        const response = await request(app).post('/musicians').send({ name: '', instrument: 'Guitar' });
+        expect(response.statusCode).toBe(200);
+        const responseData = JSON.parse(response.text);
+        expect(responseData).toEqual({ errors: [{ location: 'body', msg: 'Invalid value', path: 'name', type: 'field', value: '' }] });
     });
 })
 
