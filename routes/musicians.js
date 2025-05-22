@@ -27,6 +27,8 @@ musicianRouter.post("/",
     [
         check("name").not().isEmpty().trim(),
         check("instrument").not().isEmpty().trim(),
+        check("name").isLength({ min: 2, max: 20 }),
+        check("instrument").isLength({ min: 2, max: 20 }),
     ], 
     async (request, response) => {
         errors = validationResult(request);
@@ -39,15 +41,26 @@ musicianRouter.post("/",
         response.json(musician);
 })
 
-musicianRouter.put("/:id", async (request, response) => {
-    const musicianId = request.params.id;
-    const musician = await Musician.update(request.body, {
-        where: { id: musicianId }
-    });
-    if (!musician || musician[0] === 0) {
-        return response.status(404).json({ error: "Musician not found" });
-    }
-    response.json(musician);
+musicianRouter.put("/:id",
+    [
+        check("name").not().isEmpty().trim(),
+        check("instrument").not().isEmpty().trim(),
+        check("name").isLength({ min: 2, max: 20 }),
+        check("instrument").isLength({ min: 2, max: 20 }),
+    ],
+    async (request, response) => {
+        errors = validationResult(request);
+        if (!errors.isEmpty()) {
+            return response.json({ errors: errors.array() });
+        }
+        const musicianId = request.params.id;
+        const musician = await Musician.update(request.body, {
+            where: { id: musicianId }
+        });
+        if (!musician || musician[0] === 0) {
+            return response.status(404).json({ error: "Musician not found" });
+        }
+        response.json(musician);
 })
 
 musicianRouter.delete("/:id", async (request, response) => {

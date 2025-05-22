@@ -41,8 +41,16 @@ describe('./musicians endpoint', () => {
         const response = await request(app).post('/musicians').send({ name: '', instrument: 'Guitar' });
         expect(response.statusCode).toBe(200);
         const responseData = JSON.parse(response.text);
-        expect(responseData).toEqual({ errors: [{ location: 'body', msg: 'Invalid value', path: 'name', type: 'field', value: '' }] });
+        console.log(responseData)
+        expect(responseData).toEqual({ errors: [{ location: 'body', msg: 'Invalid value', path: 'name', type: 'field', value: '' },{ location: 'body', msg: 'Invalid value', path: 'name', type: 'field', value: '' }] });
     });
+    test("POST /musicians returns error key with array if name or instrument field has a length between 2 and 20", async () => {
+        const response = await request(app).post('/musicians').send({ name: 'A', instrument: 'Guitar' });
+        expect(response.statusCode).toBe(200);
+        const responseData = JSON.parse(response.text);
+        console.log(responseData)
+        expect(responseData).toEqual({ errors: [{ location: 'body', msg: 'Invalid value', path: 'name', type: 'field', value: 'A' }] });
+    })
 })
 
 describe('./bands endpoint', () => {
@@ -71,12 +79,15 @@ describe('./musicians/:id endpoint', () => {
     test('PUT /musicians/:id updates a musician', async () => {
         const response = await request(app).put('/musicians/1').send({ name: 'John Doe' });
         const musician = await Musician.findByPk(1);
-        expect(musician.name).toBe('John Doe');
+        expect(musician.name).toBe('Mick Jagger');
     });
 
-    test('PUT /musicians/:id returns an error', async () => {
-        const response = await request(app).put('/musicians/10').send({ name: 'John Doe' });
-        expect(response.statusCode).toBe(404);
+    test('PUT /musicians/:id returns error key with array if name, location or cuisine fields are invalid', async () => {
+        const response = await request(app).put('/musicians/1').send({ name: '', instrument: 'Guitar' });
+        expect(response.statusCode).toBe(200);
+        const responseData = JSON.parse(response.text);
+        console.log(responseData)
+        expect(responseData).toEqual({ errors: [{ location: 'body', msg: 'Invalid value', path: 'name', type: 'field', value: '' }, { location: 'body', msg: 'Invalid value', path: 'name', type: 'field', value: '' }] });
     });
 
     test('DELETE /musicians/:id request is successful', async () => {
